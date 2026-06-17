@@ -1,3 +1,0 @@
-# Glitch will run npm install from the root — workspaces handle the rest.
-# Exclude large files Glitch doesn't need to watch.
-server/public
