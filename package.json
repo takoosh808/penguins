@@ -1,0 +1,21 @@
+{
+  "name": "icebreaker-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client-host",
+    "client-player"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=client-host\" \"npm run dev --workspace=client-player\"",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:host": "npm run dev --workspace=client-host",
+    "dev:player": "npm run dev --workspace=client-player",
+    "build": "npm run build --workspace=client-host && npm run build --workspace=client-player",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
