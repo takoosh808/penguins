@@ -54,7 +54,7 @@ export default function GuessScreen({ socket, roomCode, sessionToken, gameState 
                       guesses[s.id] === label
                         ? label === "truth"
                           ? "bg-sky-300 text-sky-800 shadow-md scale-105"
-                          : "bg-butter-400 text-slate-800 shadow-md scale-105"
+                          : "bg-butter-400 text-white shadow-md scale-105"
                         : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                     }`}
                   >

@@ -55,7 +55,7 @@ export default function ResultsScreen({ gameState, sessionToken }) {
                     {s.text}
                   </p>
                   <span className={`flex-shrink-0 text-xs font-black px-2 py-1 rounded-full ${
-                    s.isLie ? "bg-butter-400 text-slate-800" : "bg-sky-200 text-sky-700"
+                    s.isLie ? "bg-butter-400 text-white" : "bg-sky-200 text-sky-700"
                   }`}>
                     {s.isLie ? "LIE" : "TRUTH"}
                   </span>

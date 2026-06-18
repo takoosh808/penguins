@@ -50,7 +50,7 @@ export default function ResultsPhase({ socket, roomCode, hostToken, gameState })
                 <p className="text-lg font-semibold text-slate-700 leading-snug">{s.text}</p>
                 <span className={`ml-auto flex-shrink-0 text-sm font-black px-3 py-1 rounded-full ${
                   s.isLie
-                    ? "bg-butter-400 text-slate-800"
+                    ? "bg-butter-400 text-white"
                     : "bg-sky-200 text-sky-700"
                 }`}>
                   {s.isLie ? "LIE" : "TRUTH"}

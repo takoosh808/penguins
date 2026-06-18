@@ -60,7 +60,7 @@ export default function InputStatements({ socket, roomCode, sessionToken }) {
                 onClick={() => handleLieToggle(i)}
                 className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-xs font-black transition-all mt-0.5 ${
                   s.isLie
-                    ? "bg-butter-400 text-slate-700 shadow-md scale-110"
+                    ? "bg-butter-400 text-white shadow-md scale-110"
                     : "bg-slate-100 text-slate-400"
                 }`}
                 title="Mark as lie"

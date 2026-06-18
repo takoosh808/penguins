@@ -55,7 +55,7 @@ export default function GamePicker({ socket, connected }) {
             <h2 className="text-xl font-black text-slate-800 mb-2 leading-tight">{game.name}</h2>
             <p className="text-slate-500 text-sm font-medium">{game.description}</p>
             {game.active && (
-              <div className="mt-4 inline-block bg-butter-400 text-slate-800 text-sm font-bold px-4 py-1.5 rounded-full group-hover:bg-butter-500 transition-colors">
+              <div className="mt-4 inline-block bg-butter-400 text-white text-sm font-bold px-4 py-1.5 rounded-full group-hover:bg-butter-500 transition-colors">
                 Open Lobby
               </div>
             )}
