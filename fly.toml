@@ -2,8 +2,7 @@ app = "icebreaker-platform"
 primary_region = "iad"
 
 [build]
-  [build.args]
-    NODE_VERSION = "20"
+  dockerfile = "Dockerfile"
 
 [env]
   NODE_ENV = "production"
