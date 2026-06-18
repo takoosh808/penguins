@@ -44,14 +44,34 @@ export function registerSocketHandlers(io, socket) {
       name,
       statements: [],
       hasSubmittedStatements: false,
+      connected: true,
     };
     room.players.push(player);
     clearCleanupTimer(roomCode);
+    clearDisconnectTimer(sessionToken);
 
     socket.join(roomCode);
     socket.emit("joined_room", { sessionToken, roomCode });
 
     io.to(roomCode).emit("player_joined", { players: room.players.map((p) => ({ id: p.id, name: p.name })) });
+    broadcastState(io, room);
+  });
+
+  // ── Player: rejoin room after reconnect ────────────────────────────────────
+  socket.on("rejoin_room", ({ roomCode, sessionToken }) => {
+    const room = getRoom(roomCode);
+    if (!room) return socket.emit("error", { message: "Room not found or expired." });
+
+    const player = room.players.find((p) => p.sessionToken === sessionToken);
+    if (!player) return socket.emit("error", { message: "Session expired. Please rejoin." });
+
+    // Cancel the deferred removal timer and restore the player
+    clearDisconnectTimer(sessionToken);
+    player.id = socket.id;
+    player.connected = true;
+
+    socket.join(roomCode);
+    socket.emit("joined_room", { sessionToken, roomCode });
     broadcastState(io, room);
   });
 
@@ -187,19 +207,44 @@ export function registerSocketHandlers(io, socket) {
       return;
     }
 
-    // Player disconnect — find which room they were in
+    // Player disconnect — mark disconnected, remove after grace period
     for (const [roomCode, room] of getAllRooms()) {
-      const playerIndex = room.players.findIndex((p) => p.id === socket.id);
-      if (playerIndex === -1) continue;
+      const player = room.players.find((p) => p.id === socket.id);
+      if (!player) continue;
 
-      room.players.splice(playerIndex, 1);
+      player.connected = false;
+      broadcastState(io, room);
 
-      if (room.players.length === 0) {
-        scheduleRoomCleanup(roomCode);
-      } else {
-        broadcastState(io, room);
-      }
+      // Give the player 30 s to reconnect before removing them
+      schedulePlayerDisconnect(player.sessionToken, () => {
+        const r = getRoom(roomCode);
+        if (!r) return;
+        const idx = r.players.findIndex((p) => p.sessionToken === player.sessionToken);
+        if (idx === -1 || r.players[idx].connected) return; // reconnected in time
+
+        r.players.splice(idx, 1);
+        if (r.players.length === 0) {
+          scheduleRoomCleanup(roomCode);
+        } else {
+          broadcastState(io, r);
+        }
+      });
       break;
     }
   });
+}
+
+// ── Deferred player removal timers ────────────────────────────────────────────
+const playerDisconnectTimers = new Map(); // sessionToken -> timeoutId
+
+function schedulePlayerDisconnect(sessionToken, fn) {
+  clearDisconnectTimer(sessionToken);
+  playerDisconnectTimers.set(sessionToken, setTimeout(fn, 30_000));
+}
+
+function clearDisconnectTimer(sessionToken) {
+  if (playerDisconnectTimers.has(sessionToken)) {
+    clearTimeout(playerDisconnectTimers.get(sessionToken));
+    playerDisconnectTimers.delete(sessionToken);
+  }
 }

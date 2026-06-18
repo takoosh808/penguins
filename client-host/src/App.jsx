@@ -63,21 +63,21 @@ export default function App() {
 
   const { screen, roomCode, hostToken, gameState, connected } = state;
 
-  if (!connected) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-5xl mb-4 animate-spin">🐧</p>
-          <p className="text-slate-500 font-bold text-lg">Connecting to server...</p>
-        </div>
-      </div>
-    );
-  }
+  // Show a small reconnecting banner instead of blocking the full screen
+  const reconnectBanner = !connected && (
+    <div className="fixed top-0 inset-x-0 z-50 flex items-center justify-center gap-2 bg-slate-800/90 text-white text-sm font-bold py-2 px-4">
+      <span className="animate-pulse">📡</span> Reconnecting to server…
+    </div>
+  );
 
-  if (screen === "picker")     return <><ConnectionPill socket={socket} /><GamePicker socket={socket} /></>;
-  if (screen === "lobby")      return <Lobby socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />;
-  if (screen === "guessing")   return <GuessingPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />;
-  if (screen === "results")    return <ResultsPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />;
-  if (screen === "final_stats") return <FinalStats socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />;
-  return null;
+  return (
+    <>
+      {reconnectBanner}
+      {screen === "picker"      && <><ConnectionPill socket={socket} /><GamePicker socket={socket} connected={connected} /></>}
+      {screen === "lobby"       && <Lobby socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
+      {screen === "guessing"    && <GuessingPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
+      {screen === "results"     && <ResultsPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
+      {screen === "final_stats" && <FinalStats socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
+    </>
+  );
 }

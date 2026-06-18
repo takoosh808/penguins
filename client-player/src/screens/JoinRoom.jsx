@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function JoinRoom({ socket, dispatch }) {
+export default function JoinRoom({ socket, dispatch, saveSession }) {
   const [name, setName] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const [error, setError] = useState(null);
@@ -20,8 +20,11 @@ export default function JoinRoom({ socket, dispatch }) {
     e.preventDefault();
     if (!name.trim() || !roomCode.trim()) return;
     setError(null);
-    dispatch({ type: "JOINED", roomCode: roomCode.toUpperCase(), sessionToken: null, playerName: name.trim() });
-    socket.emit("join_room", { roomCode: roomCode.toUpperCase(), name: name.trim() });
+    const trimmedName = name.trim();
+    const code = roomCode.toUpperCase();
+    saveSession({ roomCode: code, sessionToken: null, playerName: trimmedName });
+    dispatch({ type: "JOINED", roomCode: code, sessionToken: null, playerName: trimmedName });
+    socket.emit("join_room", { roomCode: code, name: trimmedName });
   }
 
   return (

@@ -6,6 +6,18 @@ import Waiting from "./screens/Waiting.jsx";
 import GuessScreen from "./screens/GuessScreen.jsx";
 import ResultsScreen from "./screens/ResultsScreen.jsx";
 
+const SESSION_KEY = "ib_player_session";
+
+function loadSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; }
+}
+function saveSession(data) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
 const initialState = {
   screen: "join",
   roomCode: null,
@@ -15,6 +27,7 @@ const initialState = {
   submissionProgress: null,
   connected: false,
   hostLeft: false,
+  rejoining: false,
 };
 
 function reducer(state, action) {
@@ -22,12 +35,13 @@ function reducer(state, action) {
     case "CONNECTED":    return { ...state, connected: true, hostLeft: false };
     case "DISCONNECTED": return { ...state, connected: false };
     case "HOST_LEFT":    return { ...state, hostLeft: true };
+    case "REJOINING":    return { ...state, rejoining: true };
     case "JOINED":
-      return { ...state, roomCode: action.roomCode, sessionToken: action.sessionToken, playerName: action.playerName };
+      return { ...state, roomCode: action.roomCode, sessionToken: action.sessionToken, playerName: action.playerName, rejoining: false };
     case "SESSION_TOKEN":
-      return { ...state, sessionToken: action.sessionToken };
+      return { ...state, sessionToken: action.sessionToken, rejoining: false };
     case "STATE_UPDATE":
-      return { ...state, gameState: action.gameState, screen: deriveScreen({ ...state, sessionToken: state.sessionToken }, action.gameState) };
+      return { ...state, gameState: action.gameState, rejoining: false, screen: deriveScreen({ ...state, sessionToken: action.sessionToken ?? state.sessionToken }, action.gameState) };
     case "SUBMISSION_PROGRESS":
       return { ...state, submissionProgress: action.progress };
     default:
@@ -65,11 +79,24 @@ export default function App() {
   useEffect(() => {
     socket.connect();
 
-    socket.on("connect",    () => dispatch({ type: "CONNECTED" }));
+    socket.on("connect", () => {
+      dispatch({ type: "CONNECTED" });
+
+      // Attempt to restore session on every (re)connect
+      const saved = loadSession();
+      if (saved?.sessionToken && saved?.roomCode) {
+        dispatch({ type: "REJOINING" });
+        socket.emit("rejoin_room", { roomCode: saved.roomCode, sessionToken: saved.sessionToken });
+      }
+    });
+
     socket.on("disconnect", () => dispatch({ type: "DISCONNECTED" }));
 
     socket.on("joined_room", ({ roomCode, sessionToken }) => {
       dispatch({ type: "SESSION_TOKEN", sessionToken });
+      // Merge with any existing saved name
+      const saved = loadSession();
+      saveSession({ roomCode, sessionToken, playerName: saved?.playerName ?? null });
     });
 
     socket.on("state_update", (gameState) => {
@@ -81,24 +108,25 @@ export default function App() {
     });
 
     socket.on("host_disconnected", () => {
+      clearSession();
       dispatch({ type: "HOST_LEFT" });
+    });
+
+    socket.on("error", ({ message }) => {
+      // If rejoin failed (room expired), clear saved session and show join screen
+      if (message.includes("expired") || message.includes("not found")) {
+        clearSession();
+        dispatch({ type: "DISCONNECTED" }); // trigger a re-render back to join
+      }
     });
 
     return () => socket.disconnect();
   }, []);
 
-  const { screen, roomCode, sessionToken, gameState, submissionProgress, connected, hostLeft } = state;
+  const { screen, roomCode, sessionToken, gameState, submissionProgress, connected, hostLeft, rejoining } = state;
 
-  if (!connected) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex items-center justify-center p-6 text-center">
-        <div>
-          <p className="text-5xl mb-4 animate-pulse">📡</p>
-          <p className="text-slate-500 font-bold text-lg">Reconnecting...</p>
-        </div>
-      </div>
-    );
-  }
+  // Overlay shown only when we lose connection mid-game (not on initial load)
+  const showReconnecting = !connected && (screen !== "join" || rejoining);
 
   if (hostLeft) {
     return (
@@ -118,10 +146,25 @@ export default function App() {
     );
   }
 
-  if (screen === "join")    return <JoinRoom socket={socket} dispatch={dispatch} />;
-  if (screen === "input")   return <InputStatements socket={socket} roomCode={roomCode} sessionToken={sessionToken} />;
-  if (screen === "waiting") return <Waiting progress={submissionProgress} gameState={gameState} />;
-  if (screen === "guess")   return <GuessScreen socket={socket} roomCode={roomCode} sessionToken={sessionToken} gameState={gameState} />;
-  if (screen === "results") return <ResultsScreen gameState={gameState} sessionToken={sessionToken} />;
-  return null;
+  return (
+    <div className="relative">
+      {showReconnecting && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+          <div className="bg-white rounded-3xl px-8 py-6 text-center shadow-xl">
+            <p className="text-4xl mb-3 animate-pulse">📡</p>
+            <p className="text-slate-700 font-bold text-lg">
+              {rejoining ? "Reconnecting…" : "Connection lost…"}
+            </p>
+            <p className="text-slate-400 text-sm mt-1">Hang tight, trying to get you back in</p>
+          </div>
+        </div>
+      )}
+
+      {screen === "join"    && <JoinRoom socket={socket} dispatch={dispatch} saveSession={saveSession} />}
+      {screen === "input"   && <InputStatements socket={socket} roomCode={roomCode} sessionToken={sessionToken} />}
+      {screen === "waiting" && <Waiting progress={submissionProgress} gameState={gameState} />}
+      {screen === "guess"   && <GuessScreen socket={socket} roomCode={roomCode} sessionToken={sessionToken} gameState={gameState} />}
+      {screen === "results" && <ResultsScreen gameState={gameState} sessionToken={sessionToken} />}
+    </div>
+  );
 }

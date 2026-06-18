@@ -24,7 +24,7 @@ const games = [
   },
 ];
 
-export default function GamePicker({ socket }) {
+export default function GamePicker({ socket, connected }) {
   function handleSelect(gameId) {
     socket.emit("create_room", { gameType: gameId });
   }
@@ -43,10 +43,10 @@ export default function GamePicker({ socket }) {
           <button
             key={game.id}
             onClick={() => game.active && handleSelect(game.id)}
-            disabled={!game.active}
+            disabled={!game.active || !connected}
             className={`
               card text-left transition-all duration-200 group
-              ${game.active
+              ${game.active && connected
                 ? "hover:shadow-xl hover:-translate-y-1 cursor-pointer border-2 border-transparent hover:border-butter-400"
                 : "opacity-50 cursor-not-allowed"
               }
