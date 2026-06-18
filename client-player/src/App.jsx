@@ -132,7 +132,6 @@ export default function App() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex items-center justify-center p-6 text-center">
         <div>
-          <p className="text-5xl mb-4">😢</p>
           <h1 className="text-3xl font-black text-slate-800">Host left the game</h1>
           <p className="text-slate-500 font-semibold mt-2">The room has been closed.</p>
           <button
@@ -151,7 +150,6 @@ export default function App() {
       {showReconnecting && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
           <div className="bg-white rounded-3xl px-8 py-6 text-center shadow-xl">
-            <p className="text-4xl mb-3 animate-pulse">📡</p>
             <p className="text-slate-700 font-bold text-lg">
               {rejoining ? "Reconnecting…" : "Connection lost…"}
             </p>

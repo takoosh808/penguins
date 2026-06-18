@@ -63,10 +63,14 @@ export default function App() {
 
   const { screen, roomCode, hostToken, gameState, connected } = state;
 
+  function handleBackToPicker() {
+    dispatch({ type: "RESET" });
+  }
+
   // Show a small reconnecting banner instead of blocking the full screen
   const reconnectBanner = !connected && (
     <div className="fixed top-0 inset-x-0 z-50 flex items-center justify-center gap-2 bg-slate-800/90 text-white text-sm font-bold py-2 px-4">
-      <span className="animate-pulse">📡</span> Reconnecting to server…
+      Reconnecting to server…
     </div>
   );
 
@@ -74,7 +78,7 @@ export default function App() {
     <>
       {reconnectBanner}
       {screen === "picker"      && <><ConnectionPill socket={socket} /><GamePicker socket={socket} connected={connected} /></>}
-      {screen === "lobby"       && <Lobby socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
+      {screen === "lobby"       && <Lobby socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} onBack={handleBackToPicker} />}
       {screen === "guessing"    && <GuessingPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
       {screen === "results"     && <ResultsPhase socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}
       {screen === "final_stats" && <FinalStats socket={socket} roomCode={roomCode} hostToken={hostToken} gameState={gameState} />}

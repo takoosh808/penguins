@@ -31,7 +31,6 @@ export default function InputStatements({ socket, roomCode, sessionToken }) {
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-6 text-center">
-        <p className="text-5xl mb-4">✅</p>
         <h1 className="text-3xl font-black text-slate-800">Submitted!</h1>
         <p className="text-slate-500 font-semibold mt-2">Waiting for everyone else...</p>
       </div>
@@ -59,14 +58,14 @@ export default function InputStatements({ socket, roomCode, sessionToken }) {
               <button
                 type="button"
                 onClick={() => handleLieToggle(i)}
-                className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-lg transition-all mt-0.5 ${
+                className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-xs font-black transition-all mt-0.5 ${
                   s.isLie
-                    ? "bg-butter-400 shadow-md scale-110"
-                    : "bg-slate-100 text-slate-300"
+                    ? "bg-butter-400 text-slate-700 shadow-md scale-110"
+                    : "bg-slate-100 text-slate-400"
                 }`}
                 title="Mark as lie"
               >
-                🤥
+                LIE
               </button>
               <textarea
                 className="input-field resize-none text-sm leading-snug"
@@ -80,7 +79,7 @@ export default function InputStatements({ socket, roomCode, sessionToken }) {
 
           {lieCount !== 1 && allFilled && (
             <p className="text-center text-amber-600 text-sm font-semibold">
-              Tap the 🤥 to mark exactly one statement as your lie
+              Tap LIE to mark exactly one statement as your lie
             </p>
           )}
 

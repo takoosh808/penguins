@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import QRCode from "qrcode";
 
-export default function Lobby({ socket, roomCode, hostToken, gameState }) {
+export default function Lobby({ socket, roomCode, hostToken, gameState, onBack }) {
   const canvasRef = useRef(null);
   const isProd = import.meta.env.PROD;
   const joinUrl = isProd
@@ -24,10 +24,26 @@ export default function Lobby({ socket, roomCode, hostToken, gameState }) {
     socket.emit("start_game", { roomCode, hostToken });
   }
 
+  function handleBack() {
+    socket.emit("close_room", { roomCode, hostToken });
+    onBack();
+  }
+
   const canStart = players.length >= 2;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-8">
+
+      {/* Back button */}
+      <button
+        onClick={handleBack}
+        className="absolute top-6 left-6 flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold text-sm transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+        Game Select
+      </button>
 
       {/* Header */}
       <div className="text-center mb-10">
@@ -60,7 +76,6 @@ export default function Lobby({ socket, roomCode, hostToken, gameState }) {
 
           {players.length === 0 ? (
             <div className="text-center py-10 text-slate-400">
-              <p className="text-4xl mb-2">👀</p>
               <p className="font-semibold">Waiting for players to join...</p>
             </div>
           ) : (

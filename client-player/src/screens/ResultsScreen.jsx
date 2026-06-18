@@ -6,7 +6,6 @@ export default function ResultsScreen({ gameState, sessionToken }) {
   if (phase === "final_stats") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-6 text-center">
-        <p className="text-6xl mb-4">🎉</p>
         <h1 className="text-3xl font-black text-slate-800">Game Over!</h1>
         <p className="text-slate-500 font-semibold mt-2">Check the big screen for the final stats</p>
       </div>
@@ -58,12 +57,12 @@ export default function ResultsScreen({ gameState, sessionToken }) {
                   <span className={`flex-shrink-0 text-xs font-black px-2 py-1 rounded-full ${
                     s.isLie ? "bg-butter-400 text-slate-800" : "bg-sky-200 text-sky-700"
                   }`}>
-                    {s.isLie ? "🤥 LIE" : "✓ TRUTH"}
+                    {s.isLie ? "LIE" : "TRUTH"}
                   </span>
                 </div>
                 {myGuess && (
                   <p className={`text-xs font-bold mt-1 ${wasRight ? "text-green-600" : "text-red-500"}`}>
-                    {wasRight ? "✓ You got it!" : `✗ You guessed ${myGuess}`}
+                    {wasRight ? "Correct!" : `Wrong — you guessed ${myGuess}`}
                   </p>
                 )}
               </div>

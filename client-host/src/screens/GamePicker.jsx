@@ -1,25 +1,24 @@
 import React from "react";
 
+const penguinUrl = import.meta.env.BASE_URL + "penguin.png";
+
 const games = [
   {
     id: "twoTruths",
     name: "Two Truths, One Lie",
     description: "Everyone submits 2 truths and 1 lie. Can your group spot the bluff?",
-    emoji: "🤥",
     active: true,
   },
   {
     id: "wouldYouRather",
     name: "Would You Rather",
     description: "Coming soon",
-    emoji: "🤔",
     active: false,
   },
   {
     id: "hotTakes",
     name: "Hot Takes",
     description: "Coming soon",
-    emoji: "🔥",
     active: false,
   },
 ];
@@ -31,9 +30,10 @@ export default function GamePicker({ socket, connected }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-8">
-      <div className="mb-12 text-center">
-        <h1 className="text-6xl font-black text-slate-800 tracking-tight mb-2">
-          🐧 Icebreaker
+      <div className="mb-12 text-center flex flex-col items-center gap-4">
+        <img src={penguinUrl} alt="Penguin mascot" className="w-24 h-24 object-contain" />
+        <h1 className="text-6xl font-black text-slate-800 tracking-tight">
+          Icebreaker
         </h1>
         <p className="text-xl text-slate-500 font-semibold">Pick a game to get the party started</p>
       </div>
@@ -52,12 +52,11 @@ export default function GamePicker({ socket, connected }) {
               }
             `}
           >
-            <div className="text-5xl mb-4">{game.emoji}</div>
             <h2 className="text-xl font-black text-slate-800 mb-2 leading-tight">{game.name}</h2>
             <p className="text-slate-500 text-sm font-medium">{game.description}</p>
             {game.active && (
               <div className="mt-4 inline-block bg-butter-400 text-slate-800 text-sm font-bold px-4 py-1.5 rounded-full group-hover:bg-butter-500 transition-colors">
-                Open Lobby →
+                Open Lobby
               </div>
             )}
           </button>

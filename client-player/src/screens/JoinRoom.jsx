@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const penguinUrl = import.meta.env.BASE_URL + "penguin.png";
+
 export default function JoinRoom({ socket, dispatch, saveSession }) {
   const [name, setName] = useState("");
   const [roomCode, setRoomCode] = useState("");
@@ -31,7 +33,7 @@ export default function JoinRoom({ socket, dispatch, saveSession }) {
     <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <p className="text-5xl mb-3">🐧</p>
+          <img src={penguinUrl} alt="Penguin mascot" className="w-20 h-20 object-contain mb-1" />
           <h1 className="text-4xl font-black text-slate-800">Icebreaker</h1>
           <p className="text-slate-500 font-semibold mt-1">Join the game</p>
         </div>

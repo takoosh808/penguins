@@ -177,6 +177,15 @@ export function registerSocketHandlers(io, socket) {
     broadcastState(io, room);
   });
 
+  // ── Host: close room (back to picker) ─────────────────────────────────────
+  socket.on("close_room", ({ roomCode, hostToken }) => {
+    const room = getRoom(roomCode);
+    if (!room || room.hostToken !== hostToken) return;
+    io.to(roomCode).emit("host_disconnected");
+    hostSockets.delete(socket.id);
+    deleteRoom(roomCode);
+  });
+
   // ── Host: end game ─────────────────────────────────────────────────────────
   socket.on("end_game", ({ roomCode, hostToken }) => {
     const room = getRoom(roomCode);

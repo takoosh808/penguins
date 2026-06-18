@@ -4,7 +4,6 @@ const statCards = [
   {
     key: "mostMysterious",
     label: "Most Mysterious",
-    emoji: "🔮",
     bg: "bg-sky-100",
     border: "border-sky-300",
     badge: "bg-sky-200 text-sky-700",
@@ -13,7 +12,6 @@ const statCards = [
   {
     key: "easiestRead",
     label: "Easiest Read",
-    emoji: "📖",
     bg: "bg-butter-50",
     border: "border-butter-300",
     badge: "bg-butter-300 text-slate-700",
@@ -22,7 +20,6 @@ const statCards = [
   {
     key: "bestBluffer",
     label: "Best Bluffer",
-    emoji: "🃏",
     bg: "bg-sky-50",
     border: "border-sky-200",
     badge: "bg-sky-200 text-sky-700",
@@ -31,7 +28,6 @@ const statCards = [
   {
     key: "mostPredictable",
     label: "Most Predictable",
-    emoji: "😅",
     bg: "bg-butter-50",
     border: "border-butter-200",
     badge: "bg-butter-200 text-slate-700",
@@ -58,18 +54,16 @@ export default function FinalStats({ socket, roomCode, hostToken, gameState }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-8">
       <div className="text-center mb-10">
-        <p className="text-4xl mb-2">🎉</p>
         <h1 className="text-6xl font-black text-slate-800">Final Stats</h1>
         <p className="text-slate-500 text-xl mt-2 font-semibold">Here's how everyone did</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl mb-10">
-        {statCards.map(({ key, label, emoji, bg, border, badge, desc }) => {
+        {statCards.map(({ key, label, bg, border, badge, desc }) => {
           const s = stats[key];
           return (
             <div key={key} className={`card border-2 ${border} ${bg}`}>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-3xl">{emoji}</span>
                 <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full ${badge}`}>
                   {label}
                 </span>

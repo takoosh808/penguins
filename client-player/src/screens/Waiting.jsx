@@ -9,8 +9,7 @@ export default function Waiting({ progress, gameState }) {
   if (phase === "guessing" && currentPlayer) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-100 via-cloud to-butter-100 flex flex-col items-center justify-center p-6 text-center">
-        <p className="text-6xl mb-4">😎</p>
-        <h1 className="text-3xl font-black text-slate-800">This round is about you!</h1>
+          <h1 className="text-3xl font-black text-slate-800">This round is about you!</h1>
         <p className="text-slate-500 font-semibold mt-2">
           Sit back and watch everyone try to spot your lie
         </p>
@@ -23,7 +22,6 @@ export default function Waiting({ progress, gameState }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-butter-100 via-cloud to-sky-100 flex flex-col items-center justify-center p-6 text-center">
-      <p className="text-6xl mb-4 animate-bounce">⏳</p>
       <h1 className="text-3xl font-black text-slate-800">Hang tight!</h1>
       <p className="text-slate-500 font-semibold mt-2 mb-6">
         {phase === "lobby" ? "Waiting for the host to start..." : "Waiting for everyone to submit..."}

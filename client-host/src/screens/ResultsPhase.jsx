@@ -53,7 +53,7 @@ export default function ResultsPhase({ socket, roomCode, hostToken, gameState })
                     ? "bg-butter-400 text-slate-800"
                     : "bg-sky-200 text-sky-700"
                 }`}>
-                  {s.isLie ? "🤥 LIE" : "✓ TRUTH"}
+                  {s.isLie ? "LIE" : "TRUTH"}
                 </span>
               </div>
 

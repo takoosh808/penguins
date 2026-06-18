@@ -21,7 +21,6 @@ export default function GuessScreen({ socket, roomCode, sessionToken, gameState 
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-100 via-cloud to-butter-100 flex flex-col items-center justify-center p-6 text-center">
-        <p className="text-5xl mb-4">🤞</p>
         <h1 className="text-3xl font-black text-slate-800">Guesses locked in!</h1>
         <p className="text-slate-500 font-semibold mt-2">Waiting for the reveal...</p>
       </div>
@@ -59,7 +58,7 @@ export default function GuessScreen({ socket, roomCode, sessionToken, gameState 
                         : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                     }`}
                   >
-                    {label === "truth" ? "✓ Truth" : "🤥 Lie"}
+                    {label === "truth" ? "Truth" : "Lie"}
                   </button>
                 ))}
               </div>
